@@ -27,10 +27,10 @@ function createWindow() {
     // prevent navigation to any webpage outside css.ch
     const wcs: WebContents = mainWindow.webContents;
     console.log(wcs);
-    wcs.on("will-navigate", (navEvent, url) => {
-        console.log("event will-navigate " + url);
-        if (!url.match("https?://.*\\.css\\.ch")){
-            console.log("navigate to " + url + "prevented");
+    wcs.on("will-navigate", (navEvent, navUrl) => {
+        console.log("event will-navigate " + navUrl);
+        if (!navUrl.match("https?://.*\\.css\\.ch")) {
+            console.log("navigate to " + navUrl + "prevented");
             navEvent.preventDefault();
         }
     });
