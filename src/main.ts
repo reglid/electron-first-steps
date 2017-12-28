@@ -1,15 +1,18 @@
-import {app, BrowserWindow} from "electron";
+import {app, BrowserWindow, Menu} from "electron";
 
 import * as path from "path";
 import * as url from "url";
+import {customMenu} from "./menu";
+import WebContents = Electron.WebContents;
 
-// Keep a global reference of the window object, if you don't, the window will
+
+// Keep a global reference of the window object, if you don"t, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow: Electron.BrowserWindow;
 
 function createWindow() {
     // Create the browser window.
-    mainWindow = new BrowserWindow({width: 800, height: 600});
+    mainWindow = new BrowserWindow({width: 800, height: 600, backgroundColor: "#00DDFF"});
 
     // and load the index.html of the app.
     mainWindow.loadURL(url.format({
@@ -19,7 +22,18 @@ function createWindow() {
     }));
 
     // Open the DevTools.
-    mainWindow.webContents.openDevTools();
+    // mainWindow.webContents.openDevTools();
+
+    // prevent navigation to any webpage outside css.ch
+    const wcs: WebContents = mainWindow.webContents;
+    console.log(wcs);
+    wcs.on("will-navigate", (navEvent, url) => {
+        console.log("event will-navigate " + url);
+        if (!url.match("https?://.*\\.css\\.ch")){
+            console.log("navigate to " + url + "prevented");
+            navEvent.preventDefault();
+        }
+    });
 
     // Emitted when the window is closed.
     mainWindow.on("closed", () => {
@@ -28,6 +42,9 @@ function createWindow() {
         // when you should delete the corresponding element.
         mainWindow = null;
     });
+
+    // Configure the application menu
+    Menu.setApplicationMenu(customMenu);
 }
 
 // This method will be called when Electron has finished
